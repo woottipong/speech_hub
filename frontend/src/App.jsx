@@ -91,7 +91,7 @@ function NavDropdown({ group }) {
         onMouseEnter={handleOpen}
         aria-haspopup="true"
         aria-expanded={open}
-        className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 select-none
+        className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 select-none
           ${isActive
             ? `${group.activeBg} border ${group.activeBorder} ${group.activeGlow} text-white`
             : 'text-white/40 hover:text-white hover:bg-white/5 border border-transparent'
@@ -131,9 +131,8 @@ function NavDropdown({ group }) {
                         : 'hover:bg-white/5 border border-transparent text-white/50 hover:text-white'
                       }`}
                   >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
-                      itemActive ? `${group.activeBg} ${group.activeBorder}` : 'bg-white/[0.03] border-white/5'
-                    }`}>
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${itemActive ? `${group.activeBg} ${group.activeBorder}` : 'bg-white/[0.03] border-white/5'
+                      }`}>
                       <ItemIcon className={`w-4 h-4 ${itemActive ? group.color : 'text-white/30'}`} />
                     </div>
                     <div className="min-w-0">
@@ -193,8 +192,8 @@ function AnimatedRoutes() {
 
 function Header() {
   return (
-    <header className="relative w-full z-50 px-4 py-3 flex justify-center">
-      <div className="glass-panel rounded-2xl px-2 py-1.5 flex items-center gap-3 border border-white/8 shadow-2xl bg-[#0a0d14]/90 backdrop-blur-xl">
+    <header className="relative w-full z-50 px-4 py-2 flex justify-center">
+      <div className="glass-panel rounded-2xl px-3 py-1.5 flex items-center gap-2 border border-white/8 shadow-2xl bg-[#0a0d14]/90 backdrop-blur-xl">
         {/* Logo */}
         <NavLink to="/" className="flex items-center gap-2 px-2 py-1 hover:opacity-80 transition-opacity shrink-0">
           <AnimatedLogo className="w-5 h-5" />
@@ -203,10 +202,10 @@ function Header() {
           </h1>
         </NavLink>
 
-        <div className="h-5 w-px bg-white/8 shrink-0" />
+        <div className="h-4 w-px bg-white/8 shrink-0" />
 
         {/* Dropdown Nav */}
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-0.5">
           {navGroups.map((group) => (
             <NavDropdown key={group.basePath} group={group} />
           ))}

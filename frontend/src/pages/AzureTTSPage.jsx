@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Play, Square, Loader2, MessageSquare, Volume2, Sparkles, AlertCircle, ChevronDown, Wand2, Clock, Search, Check, Bot } from 'lucide-react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 
+import CustomAudioPlayer from '../components/CustomAudioPlayer';
 import { API_BASE, TTS_VOICE_GROUPS, ALL_TTS_VOICES, STYLE_LABELS, TTS_MAX_CHARS } from '../lib/constants';
 import { useTTS } from '../lib/TTSContext';
 
@@ -26,9 +27,8 @@ async function fetchPreviewAudio(voiceValue, previewText) {
 }
 
 export default function AzureTTSPage() {
-    const { voice, setVoice, style, setStyle } = useTTS();
+    const { text, setText, voice, setVoice, style, setStyle } = useTTS();
 
-    const [text, setText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [audioUrl, setAudioUrl] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
@@ -204,7 +204,7 @@ export default function AzureTTSPage() {
                                             Azure HD{style ? ` · ${style}` : ''}
                                         </p>
                                     </div>
-                                    <audio ref={audioRef} src={audioUrl} controls className="h-10 max-w-[240px] outline-none opacity-80 hover:opacity-100 transition-opacity" />
+                                    <CustomAudioPlayer src={audioUrl} />
                                 </Motion.div>
                             )}
                         </AnimatePresence>

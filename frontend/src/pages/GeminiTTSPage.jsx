@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Play, Loader2, MessageSquare, Volume2, Sparkles, AlertCircle, ChevronDown, Wand2, Users, Clock, Search, Check, Cloud } from 'lucide-react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 
+import CustomAudioPlayer from '../components/CustomAudioPlayer';
 import { API_BASE, GEMINI_TTS_VOICE_GROUPS, ALL_GEMINI_TTS_VOICES, TTS_MAX_CHARS } from '../lib/constants';
 import { useTTS } from '../lib/TTSContext';
 
@@ -18,6 +19,8 @@ const getEstimateTime = (charCount) => {
 
 export default function GeminiTTSPage() {
     const {
+        text, setText,
+        instruction, setInstruction,
         geminiVoice, setGeminiVoice,
         isDialogueMode, setIsDialogueMode,
         speaker1Name, setSpeaker1Name,
@@ -26,8 +29,6 @@ export default function GeminiTTSPage() {
         speaker2Voice, setSpeaker2Voice,
     } = useTTS();
 
-    const [text, setText] = useState('');
-    const [instruction, setInstruction] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [audioUrl, setAudioUrl] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
@@ -219,7 +220,7 @@ export default function GeminiTTSPage() {
                                             Gemini AI · 24KHz
                                         </p>
                                     </div>
-                                    <audio ref={audioRef} src={audioUrl} controls className="h-10 max-w-[240px] outline-none opacity-80 hover:opacity-100 transition-opacity" />
+                                    <CustomAudioPlayer src={audioUrl} isGemini={true} />
                                 </Motion.div>
                             )}
                         </AnimatePresence>

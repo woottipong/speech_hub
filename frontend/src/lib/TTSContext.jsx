@@ -6,6 +6,10 @@ const TTSContext = createContext();
 export function TTSProvider({ children }) {
     const [provider, setProvider] = useState('azure'); // 'azure' | 'gemini'
     
+    // Shared Text Input State
+    const [text, setText] = useState('');
+    const [instruction, setInstruction] = useState('');
+
     // Single Mode States
     const [voice, setVoice] = useState(ALL_TTS_VOICES[0].value);
     const [geminiVoice, setGeminiVoice] = useState(ALL_GEMINI_TTS_VOICES[0].value);
@@ -28,6 +32,8 @@ export function TTSProvider({ children }) {
     return (
         <TTSContext.Provider value={{
             provider, setProvider,
+            text, setText,
+            instruction, setInstruction,
             voice, setVoice,
             geminiVoice, setGeminiVoice,
             style, setStyle,
