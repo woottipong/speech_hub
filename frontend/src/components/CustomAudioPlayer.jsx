@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
 
@@ -9,11 +9,52 @@ export default function CustomAudioPlayer({ src, colorClass = 'text-cyan-400', b
     const [duration, setDuration] = useState(0);
     const [isMuted, setIsMuted] = useState(false);
     const [volume, setVolume] = useState(1);
-    
+    const [activeBarIndex, setActiveBarIndex] = useState(-1);
+
+    // Generate realistic waveform data using multiple harmonics
+    const waveformData = useMemo(() => {
+        const bars = 48;
+        const data = [];
+        // Use multiple sine waves to create more natural looking waveform
+        for (let i = 0; i < bars; i++) {
+            const position = i / bars;
+            // Primary wave - main pattern
+            const wave1 = Math.sin(position * Math.PI * 4) * 0.4;
+            // Secondary wave - adds variation
+            const wave2 = Math.sin(position * Math.PI * 7 + 1.5) * 0.25;
+            // Tertiary wave - subtle detail
+            const wave3 = Math.sin(position * Math.PI * 11 + 0.8) * 0.15;
+            // Add some per-bar noise for realism
+            const noise = (Math.sin(i * 0.7) * 0.5 + 0.5) * 0.2;
+
+            // Combine and normalize to 0-1 range
+            let height = Math.abs(wave1 + wave2 + wave3 + noise);
+            // Scale to reasonable visual range (20% to 90%)
+            height = 0.2 + height * 0.7;
+            data.push(height);
+        }
+        return data;
+    }, []);
+
+    // Animate waveform during playback
+    useEffect(() => {
+        let interval;
+        if (isPlaying) {
+            interval = setInterval(() => {
+                // Create a moving wave effect
+                setActiveBarIndex(Math.floor(Math.random() * waveformData.length));
+            }, 80);
+        } else {
+            setActiveBarIndex(-1);
+        }
+        return () => clearInterval(interval);
+    }, [isPlaying, waveformData]);
+
     // Reset state when src changes
     useEffect(() => {
         setIsPlaying(false);
         setProgress(0);
+        setActiveBarIndex(-1);
         if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current.load();
@@ -62,7 +103,7 @@ export default function CustomAudioPlayer({ src, colorClass = 'text-cyan-400', b
         const x = e.clientX - rect.left;
         const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
         const newTime = (percentage / 100) * duration;
-        
+
         audioRef.current.currentTime = newTime;
         setProgress(percentage);
     };
@@ -80,7 +121,7 @@ export default function CustomAudioPlayer({ src, colorClass = 'text-cyan-400', b
     const accentTextColorClass = isGemini ? 'text-amber-400' : 'text-cyan-400';
 
     return (
-        <div className="flex flex-col w-full max-w-[280px] gap-2">
+        <div className="flex flex-col w-full gap-2">
             <audio
                 ref={audioRef}
                 src={src}
@@ -89,53 +130,54 @@ export default function CustomAudioPlayer({ src, colorClass = 'text-cyan-400', b
                 onLoadedMetadata={handleTimeUpdate}
                 className="hidden"
             />
-            
+
             <div className="flex items-center gap-3">
                 <button
                     onClick={togglePlay}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all ${
-                        isPlaying 
-                            ? `bg-${accentColor}-500/20 border border-${accentColor}-500/40 ${accentTextColorClass}` 
+                    className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${isPlaying
+                            ? `bg-${accentColor}-500/20 border border-${accentColor}-500/40 ${accentTextColorClass}`
                             : 'bg-white/10 hover:bg-white/20 text-white'
-                    }`}
+                        }`}
                 >
-                    {isPlaying ? <Pause className="w-3.5 h-3.5 fill-current" /> : <Play className="w-3.5 h-3.5 fill-current ml-0.5" />}
+                    {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
                 </button>
-                
+
                 {/* Waveform / Progress bar */}
-                <div 
-                    className="flex-1 h-8 bg-black/40 rounded-lg border border-white/5 relative overflow-hidden cursor-pointer flex items-center"
+                <div
+                    className="flex-1 h-10 bg-black/40 rounded-lg border border-white/5 relative overflow-hidden cursor-pointer"
                     onClick={handleSeek}
                 >
-                    {/* Simulated Waveform background */}
-                    <div className="absolute inset-0 flex items-center justify-between px-2 opacity-20">
-                        {[...Array(24)].map((_, i) => (
-                            <div key={i} className="w-1 bg-white/50 rounded-full" style={{ height: `${Math.max(20, Math.random() * 100)}%` }} />
-                        ))}
-                    </div>
-                    
-                    {/* Active Progress fill */}
-                    <div 
-                        className={`absolute left-0 top-0 bottom-0 ${accentBgColorClass}/20 backdrop-blur-sm border-r border-${accentColor}-400/50 transition-all duration-100 ease-linear`}
-                        style={{ width: `${progress}%` }}
-                    >
-                        {/* Simulated Waveform active */}
-                        <div className="absolute inset-0 flex items-center justify-between px-2 w-[100vw] max-w-[210px]">
-                            {[...Array(24)].map((_, i) => (
-                                <div key={i} className={`w-1 ${accentBgColorClass} rounded-full opacity-80`} style={{ height: `${Math.max(20, Math.random() * 100)}%` }} />
-                            ))}
-                        </div>
+                    {/* Waveform bars container */}
+                    <div className="absolute inset-0 flex items-center justify-between px-1.5 py-2 gap-0.5">
+                        {waveformData.map((height, i) => {
+                            const isPlayed = (i / waveformData.length) * 100 <= progress;
+                            const isActive = isPlaying && Math.abs(i - activeBarIndex) <= 2;
+                            return (
+                                <div
+                                    key={i}
+                                    className={`flex-1 rounded-full transition-all duration-150 ease-out ${isPlayed
+                                            ? `${accentBgColorClass}`
+                                            : 'bg-white/20'
+                                        }`}
+                                    style={{
+                                        height: `${height * 100}%`,
+                                        opacity: isActive && !isPlayed ? 0.6 : (isPlayed ? 0.9 : 0.3),
+                                        transform: isActive ? 'scaleY(1.1)' : 'scaleY(1)',
+                                    }}
+                                />
+                            );
+                        })}
                     </div>
                 </div>
 
                 <button
                     onClick={toggleMute}
-                    className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 hover:bg-white/10 transition-colors text-white/50 hover:text-white"
+                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 hover:bg-white/10 transition-colors text-white/50 hover:text-white"
                 >
-                    {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                    {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                 </button>
             </div>
-            
+
             <div className="flex items-center justify-between px-1">
                 <span className="text-[9px] font-mono text-white/40">{formatTime((progress / 100) * duration)}</span>
                 <span className="text-[9px] font-mono text-white/40">{formatTime(duration)}</span>

@@ -1,19 +1,11 @@
 import { useState, useRef } from 'react';
-import { Play, Square, Loader2, MessageSquare, Volume2, Sparkles, AlertCircle, ChevronDown, Wand2, Clock, Search, Check, Bot } from 'lucide-react';
+import { Play, Square, Loader2, MessageSquare, Volume2, Sparkles, AlertCircle, ChevronDown, Wand2, Clock, Search, Check, Bot, Download } from 'lucide-react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
-
 import CustomAudioPlayer from '../components/CustomAudioPlayer';
+import AnimatedProcessing from '../components/AnimatedProcessing';
+import EstimatedTimeDisplay from '../components/EstimatedTimeDisplay';
 import { API_BASE, TTS_VOICE_GROUPS, ALL_TTS_VOICES, STYLE_LABELS, TTS_MAX_CHARS } from '../lib/constants';
 import { useTTS } from '../lib/TTSContext';
-
-const getEstimateTime = (charCount) => {
-    if (charCount === 0) return '0s';
-    const estSeconds = Math.ceil((charCount / 20) + 0.5);
-    if (estSeconds < 60) return `~${estSeconds}s`;
-    const mins = Math.floor(estSeconds / 60);
-    const secs = estSeconds % 60;
-    return `~${mins}m ${secs}s`;
-};
 
 async function fetchPreviewAudio(voiceValue, previewText) {
     const res = await fetch(`${API_BASE}/api/tts`, {
@@ -88,6 +80,20 @@ export default function AzureTTSPage() {
         if (!meta?.styles.includes(style)) setStyle('');
     };
 
+    const getEstimateTime = (charCount) => {
+        if (charCount === 0) return '0s';
+        // Estimate audio duration: ความยาวเสียง (วินาที) ≈ จำนวนตัวอักษรไทย / 15
+        const estAudioSeconds = Math.ceil(charCount / 15);
+        const mins = Math.floor(estAudioSeconds / 60);
+        const secs = estAudioSeconds % 60;
+        if (mins === 0) return `~${secs}s`;
+        return `~${mins}m ${secs}s`;
+    };
+
+    const calculateCost = (chars) => {
+        return (chars * 0.0006).toFixed(4);
+    };
+
     const handleSpeak = async () => {
         if (!text.trim()) return;
         setIsLoading(true);
@@ -113,6 +119,16 @@ export default function AzureTTSPage() {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleDownload = () => {
+        if (!audioUrl) return;
+        const a = document.createElement('a');
+        a.href = audioUrl;
+        a.download = `azure-tts-${Date.now()}.mp3`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     };
 
     return (
@@ -147,6 +163,9 @@ export default function AzureTTSPage() {
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400/80 bg-emerald-400/5 px-3 py-1.5 rounded-md border border-emerald-400/10">
                                     <Clock className="w-3.5 h-3.5" /> ETA: {getEstimateTime(text.length)}
+                                </div>
+                                <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400/80 bg-amber-400/5 px-3 py-1.5 rounded-md border border-amber-400/10">
+                                    Cost: ${calculateCost(text.length)}
                                 </div>
                                 <span className={`text-xs font-mono font-bold ${text.length > TTS_MAX_CHARS * 0.9 ? 'text-orange-400' : 'text-white/30'}`}>
                                     {text.length.toLocaleString()} / {TTS_MAX_CHARS.toLocaleString()}
@@ -185,7 +204,15 @@ export default function AzureTTSPage() {
                             style={!text.trim() || isLoading ? {} : { background: 'linear-gradient(135deg, #06b6d4, #3b82f6)' }}
                         >
                             {isLoading ? (
-                                <><Loader2 className="w-5 h-5 animate-spin" /> Synthesizing Audio...</>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 scale-75 origin-center">
+                                        <AnimatedProcessing step="synthesizing" />
+                                    </div>
+                                    <div className="flex flex-col items-start leading-tight">
+                                        <span>Synthesizing Audio...</span>
+                                        <EstimatedTimeDisplay isLoading={isLoading} charCount={text.trim().length} provider="azure" />
+                                    </div>
+                                </div>
                             ) : (
                                 <><Play className="w-4 h-4 fill-current group-hover:scale-110 transition-transform" /> Synthesize Speech</>
                             )}
@@ -194,17 +221,21 @@ export default function AzureTTSPage() {
                         <AnimatePresence>
                             {audioUrl && (
                                 <Motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                                    className="glass-panel p-4 flex items-center gap-4 relative overflow-hidden">
-                                    <div className="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center shrink-0">
-                                        <Volume2 className="w-5 h-5 text-cyan-400" />
+                                    className="glass-panel p-4 relative overflow-hidden">
+                                    {/* Audio Player Controls */}
+                                    <div className="flex items-center gap-3 bg-black/20 p-3 rounded-xl border border-white/5">
+                                        <div className="flex-1 min-w-0">
+                                            <CustomAudioPlayer src={audioUrl} />
+                                        </div>
+                                        <div className="w-[1px] h-8 bg-white/10 shrink-0"></div>
+                                        <button
+                                            onClick={handleDownload}
+                                            className="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center shrink-0 hover:bg-cyan-500/30 transition-colors text-cyan-400"
+                                            title="Download audio"
+                                        >
+                                            <Download className="w-4 h-4" />
+                                        </button>
                                     </div>
-                                    <div className="min-w-0 flex-1">
-                                        <h4 className="font-bold text-white text-sm truncate">{selectedVoiceMeta?.label ?? 'Generated Stream'}</h4>
-                                        <p className="text-[10px] text-white/40 uppercase tracking-widest font-mono mt-0.5">
-                                            Azure HD{style ? ` · ${style}` : ''}
-                                        </p>
-                                    </div>
-                                    <CustomAudioPlayer src={audioUrl} />
                                 </Motion.div>
                             )}
                         </AnimatePresence>

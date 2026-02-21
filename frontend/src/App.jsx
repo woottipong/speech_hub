@@ -166,7 +166,7 @@ function AnimatedRoutes() {
         initial={{ opacity: 0, y: 15, filter: 'blur(4px)' }}
         animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
         exit={{ opacity: 0, scale: 0.98, filter: 'blur(4px)' }}
-        transition={{ duration: 0.3, ease: 'easeOut' }}
+        transition={{ duration: 0.15, ease: 'easeOut' }}
         className="w-full h-full flex flex-col"
       >
         <Routes location={location}>
