@@ -49,14 +49,14 @@ function AnimatedRoutes() {
 
 function Header() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-center pointer-events-none">
-      <div className="glass-panel rounded-full px-2 py-2 flex items-center gap-6 pointer-events-auto border border-white/10 shadow-2xl bg-black/40">
-        <div className="flex items-center gap-2 pl-4 pr-2">
-          <AnimatedLogo className="w-6 h-6" />
-          <h1 className="text-lg font-bold tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
+    <header className="relative w-full z-50 px-4 py-4 flex justify-center">
+      <div className="glass-panel rounded-full px-1 py-1 flex items-center gap-6 border border-white/10 shadow-xl bg-[#0a0d14]/80 backdrop-blur-xl">
+        <NavLink to="/" className="flex items-center gap-2 pl-4 pr-2 hover:opacity-80 transition-opacity">
+          <AnimatedLogo className="w-5 h-5" />
+          <h1 className="text-base font-black tracking-tighter uppercase bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
             Speech<span className="text-white">Hub</span>
           </h1>
-        </div>
+        </NavLink>
 
         <div className="h-4 w-px bg-white/10" />
 
@@ -67,9 +67,9 @@ function Header() {
               to={item.to}
               end={false}
               className={({ isActive }) => {
-                return `relative px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 overflow-hidden group ${isActive
+                return `relative px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center gap-2 overflow-hidden group ${isActive
                   ? 'text-white'
-                  : 'text-[var(--text-muted)] hover:text-white hover:bg-white/5'
+                  : 'text-white/40 hover:text-white hover:bg-white/5'
                   }`;
               }}
             >
@@ -80,11 +80,11 @@ function Header() {
                     {isActive && (
                       <Motion.div
                         layoutId="nav-pill"
-                        className="absolute inset-0 bg-white/10 border border-white/20 rounded-full"
+                        className="absolute inset-0 bg-white/10 border border-white/10 rounded-full"
                         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                       />
                     )}
-                    <NavIcon className="w-4 h-4 relative z-10" />
+                    <NavIcon className="w-3.5 h-3.5 relative z-10" />
                     <span className="relative z-10">{item.label}</span>
                   </>
                 );
@@ -100,20 +100,28 @@ function Header() {
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen flex flex-col relative overflow-hidden text-[var(--text-primary)]">
+      <div className="h-screen w-screen flex flex-col relative bg-[#02040a] text-[var(--text-primary)] overflow-hidden">
 
-        <AnimatedBackground />
+        {/* Absolute Background Layer */}
+        <div className="absolute inset-0 z-0">
+          <AnimatedBackground />
+        </div>
 
-        {/* Floating Header */}
-        <Header />
+        {/* Static Header — No more floating overlap */}
+        <div className="relative z-50 shrink-0">
+          <Header />
+        </div>
 
-        <main className="flex-1 flex flex-col items-center pt-32 pb-20 px-4 w-full max-w-5xl mx-auto z-10">
-          <AnimatedRoutes />
+        {/* Main Content Area — Fills remaining height, internal scroll only */}
+        <main className="relative z-10 flex-1 flex flex-col w-full max-w-6xl mx-auto px-4 min-h-0">
+          <div className="flex-1 h-full overflow-y-auto custom-scrollbar py-6">
+            <AnimatedRoutes />
+          </div>
         </main>
 
-        <footer className="relative z-10 text-center text-xs font-medium tracking-widest uppercase text-white/30 py-8 flex items-center justify-center gap-2">
+        <footer className="relative z-10 shrink-0 text-center text-[10px] font-medium tracking-widest uppercase text-white/20 py-3 flex items-center justify-center gap-2 border-t border-white/5 bg-black/20">
           <span>Powered by Azure & Google Cloud</span>
-          <ChevronRight className="w-3 h-3" />
+          <ChevronRight className="w-2 h-2" />
           <span>Speech Intelligence</span>
         </footer>
       </div>

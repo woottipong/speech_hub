@@ -13,6 +13,8 @@ const JOB_CLEANUP_INTERVAL_MS = parseInt(process.env.JOB_CLEANUP_INTERVAL_MS || 
 const AZURE_SPEECH_KEY = process.env.AZURE_SPEECH_KEY;
 const AZURE_SPEECH_REGION = process.env.AZURE_SPEECH_REGION;
 
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
 const GOOGLE_APPLICATION_CREDENTIALS = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 const GOOGLE_CLOUD_PROJECT = process.env.GOOGLE_CLOUD_PROJECT;
 const STT_LOCATION = process.env.STT_LOCATION || 'global';
@@ -40,6 +42,11 @@ function validateConfig(logger = console) {
         logger.warn(`⚠️  Google STT unavailable — missing: ${missingGoogle.join(', ')}`);
         logger.warn('   Set these in .env to enable Google Cloud Speech-to-Text v2.');
     }
+
+    if (!process.env.GEMINI_API_KEY) {
+        logger.warn('⚠️  Gemini TTS unavailable — GEMINI_API_KEY is not set.');
+        logger.warn('   Get a key at https://aistudio.google.com/apikey and add it to .env.');
+    }
 }
 
 module.exports = {
@@ -50,6 +57,7 @@ module.exports = {
     JOB_CLEANUP_INTERVAL_MS,
     AZURE_SPEECH_KEY,
     AZURE_SPEECH_REGION,
+    GEMINI_API_KEY,
     GOOGLE_APPLICATION_CREDENTIALS,
     GOOGLE_CLOUD_PROJECT,
     STT_LOCATION,

@@ -178,6 +178,71 @@ export const TTS_VOICE_GROUPS = [
 // Flat list for backward-compat lookups
 export const ALL_TTS_VOICES = TTS_VOICE_GROUPS.flatMap((g) => g.voices);
 
+export const GEMINI_TTS_VOICE_GROUPS = [
+    {
+        group: '✨ Bright & Upbeat',
+        voices: [
+            { value: 'Zephyr', label: 'Zephyr', gender: 'Female', desc: 'Bright, cheerful', preview: PREVIEW_TH_F },
+            { value: 'Aoede', label: 'Aoede', gender: 'Female', desc: 'Breezy, easy-going', preview: PREVIEW_TH_F },
+            { value: 'Leda', label: 'Leda', gender: 'Female', desc: 'Youthful, warm', preview: PREVIEW_TH_F },
+            { value: 'Puck', label: 'Puck', gender: 'Male', desc: 'Upbeat, lively', preview: PREVIEW_TH },
+            { value: 'Fenrir', label: 'Fenrir', gender: 'Male', desc: 'Excitable, energetic', preview: PREVIEW_TH },
+        ],
+    },
+    {
+        group: '🎙 Clear & Informative',
+        voices: [
+            { value: 'Charon', label: 'Charon', gender: 'Male', desc: 'Informative, clear', preview: PREVIEW_TH },
+            { value: 'Orus', label: 'Orus', gender: 'Male', desc: 'Firm, authoritative', preview: PREVIEW_TH },
+            { value: 'Schedar', label: 'Schedar', gender: 'Male', desc: 'Even, steady', preview: PREVIEW_TH },
+            { value: 'Rasalgethi', label: 'Rasalgethi', gender: 'Male', desc: 'Informative, direct', preview: PREVIEW_TH },
+            { value: 'Iapetus', label: 'Iapetus', gender: 'Male', desc: 'Clear, composed', preview: PREVIEW_TH },
+        ],
+    },
+    {
+        group: '💎 Confident & Firm',
+        voices: [
+            { value: 'Kore', label: 'Kore', gender: 'Female', desc: 'Firm, confident', preview: PREVIEW_TH_F },
+            { value: 'Achernar', label: 'Achernar', gender: 'Female', desc: 'Soft, precise', preview: PREVIEW_TH_F },
+            { value: 'Gacrux', label: 'Gacrux', gender: 'Female', desc: 'Mature, steady', preview: PREVIEW_TH_F },
+            { value: 'Pulcherrima', label: 'Pulcherrima', gender: 'Female', desc: 'Forward, confident', preview: PREVIEW_TH_F },
+            { value: 'Vindemiatrix', label: 'Vindemiatrix', gender: 'Female', desc: 'Gentle, assured', preview: PREVIEW_TH_F },
+        ],
+    },
+    {
+        group: '🌊 Smooth & Warm',
+        voices: [
+            { value: 'Callirrhoe', label: 'Callirrhoe', gender: 'Female', desc: 'Easy-going, warm', preview: PREVIEW_TH_F },
+            { value: 'Despina', label: 'Despina', gender: 'Female', desc: 'Smooth, flowing', preview: PREVIEW_TH_F },
+            { value: 'Erinome', label: 'Erinome', gender: 'Female', desc: 'Clear, bright', preview: PREVIEW_TH_F },
+            { value: 'Sulafat', label: 'Sulafat', gender: 'Female', desc: 'Warm, rounded', preview: PREVIEW_TH_F },
+            { value: 'Umbriel', label: 'Umbriel', gender: 'Male', desc: 'Easy-going, casual', preview: PREVIEW_TH },
+        ],
+    },
+    {
+        group: '🔥 Dynamic & Expressive',
+        voices: [
+            { value: 'Algieba', label: 'Algieba', gender: 'Male', desc: 'Smooth, dynamic', preview: PREVIEW_TH },
+            { value: 'Alnilam', label: 'Alnilam', gender: 'Male', desc: 'Firm, expressive', preview: PREVIEW_TH },
+            { value: 'Autonoe', label: 'Autonoe', gender: 'Female', desc: 'Bright, expressive', preview: PREVIEW_TH_F },
+            { value: 'Laomedeia', label: 'Laomedeia', gender: 'Female', desc: 'Upbeat, spirited', preview: PREVIEW_TH_F },
+            { value: 'Sadachbia', label: 'Sadachbia', gender: 'Male', desc: 'Lively, engaging', preview: PREVIEW_TH },
+        ],
+    },
+    {
+        group: '🌙 Calm & Gentle',
+        voices: [
+            { value: 'Zubenelgenubi', label: 'Zubenelgenubi', gender: 'Male', desc: 'Casual, relaxed', preview: PREVIEW_TH },
+            { value: 'Sadaltager', label: 'Sadaltager', gender: 'Male', desc: 'Knowledgeable, calm', preview: PREVIEW_TH },
+            { value: 'Syrma', label: 'Syrma', gender: 'Female', desc: 'Composed, gentle', preview: PREVIEW_TH_F },
+            { value: 'Telescopium', label: 'Telescopium', gender: 'Male', desc: 'Steady, measured', preview: PREVIEW_TH },
+            { value: 'Wasat', label: 'Wasat', gender: 'Male', desc: 'Direct, clear', preview: PREVIEW_TH },
+        ],
+    },
+];
+
+export const ALL_GEMINI_TTS_VOICES = GEMINI_TTS_VOICE_GROUPS.flatMap((g) => g.voices);
+
 export const STYLE_LABELS = {
     empathetic: '🤝 Empathetic',
     relieved: '😌 Relieved',
