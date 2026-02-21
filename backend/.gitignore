@@ -1,0 +1,7 @@
+# Speech Hub — Backend
+
+node_modules/
+uploads/*
+!uploads/.gitkeep
+.env
+*.log
