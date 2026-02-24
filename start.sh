@@ -11,10 +11,16 @@ echo "🚀 Starting Speech Hub Development Servers..."
 echo "📁 Backend: $BACKEND_DIR"
 echo "📁 Frontend: $FRONTEND_DIR"
 
+# Resolve bun binary
+BUN_BIN="${HOME}/.bun/bin/bun"
+if ! command -v bun &>/dev/null && [ -f "$BUN_BIN" ]; then
+    export PATH="${HOME}/.bun/bin:$PATH"
+fi
+
 # Check if backend dependencies are installed
 if [ ! -d "$BACKEND_DIR/node_modules" ]; then
     echo "📦 Installing backend dependencies..."
-    cd "$BACKEND_DIR" && npm install
+    cd "$BACKEND_DIR" && "$BUN_BIN" install
 fi
 
 # Check if frontend dependencies are installed  
@@ -24,8 +30,8 @@ if [ ! -d "$FRONTEND_DIR/node_modules" ]; then
 fi
 
 # Start backend server in background
-echo "🔧 Starting backend server..."
-(cd "$BACKEND_DIR" && npm run dev) &
+echo "🔧 Starting backend server (bun)..."
+(cd "$BACKEND_DIR" && "$BUN_BIN" --watch server.js) &
 BACKEND_PID=$!
 
 # Wait a moment for backend to start

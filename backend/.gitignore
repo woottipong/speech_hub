@@ -1,7 +1,9 @@
 # Speech Hub — Backend
 
 node_modules/
+bun.lockb
 uploads/*
 !uploads/.gitkeep
 .env
 *.log
+package-lock.json

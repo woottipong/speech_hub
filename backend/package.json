@@ -4,8 +4,8 @@
   "description": "Speech Hub API — STT, TTS, VTT generation via Azure",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "bun server.js",
+    "dev": "bun --watch server.js"
   },
   "dependencies": {
     "@google-cloud/speech": "^7.2.1",
@@ -19,7 +19,5 @@
     "multer": "^2.0.2",
     "wav": "^1.0.2"
   },
-  "devDependencies": {
-    "nodemon": "^3.1.4"
-  }
+  "devDependencies": {}
 }
